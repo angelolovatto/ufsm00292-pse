@@ -1,0 +1,10 @@
+stateDiagram-v2
+    title TX FSM (transmissão de protocolo) — switch-case
+    [*] --> SEND_STX
+    SEND_STX --> SEND_LEN
+    SEND_LEN --> SEND_DATA : LEN > 0
+    SEND_LEN --> SEND_CHK : LEN == 0
+    SEND_DATA --> SEND_CHK : idx == LEN
+    SEND_CHK --> SEND_ETX
+    SEND_ETX --> DONE
+    DONE --> [*]

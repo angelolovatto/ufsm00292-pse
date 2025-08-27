@@ -1,0 +1,12 @@
+stateDiagram-v2
+    title RX FSM (recepção de protocolo) — switch-case
+    [*] --> WAIT_STX
+    WAIT_STX --> READ_LEN : byte == STX
+    READ_LEN --> WAIT_STX : LEN == 0 / erro
+    READ_LEN --> READ_DATA : LEN > 0
+    READ_DATA --> READ_CHK : idx == LEN
+    READ_CHK --> WAIT_ETX
+    WAIT_ETX --> PROCESS : byte == ETX && checksum OK
+    WAIT_ETX --> ERROR : byte != ETX || checksum NOK
+    ERROR --> WAIT_STX
+    PROCESS --> WAIT_STX
