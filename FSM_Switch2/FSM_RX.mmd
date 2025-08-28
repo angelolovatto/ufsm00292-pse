@@ -1,12 +1,18 @@
 stateDiagram-v2
     direction LR
+
     [*] --> WAIT_STX
-    WAIT_STX --> READ_LEN: byte==STX
-    READ_LEN --> WAIT_STX: LEN==0 (error)
-    READ_LEN --> READ_DATA: LEN>0
-    READ_DATA --> READ_CHK: idx==LEN
+    WAIT_STX --> READ_QTD: byte==STX
+
+    READ_QTD --> READ_DATA: QTD>0
+    READ_QTD --> READ_CHK:  QTD==0
+    %% se o prof exigir QTD>=1, troque a linha acima por:
+    %% READ_QTD --> ERROR: QTD==0
+
+    READ_DATA --> READ_CHK: idx==QTD
     READ_CHK --> WAIT_ETX
-    WAIT_ETX --> DELIVER: byte==ETX && checksum OK
-    WAIT_ETX --> ERROR: byte!=ETX || checksum NOK
-    ERROR --> WAIT_STX
+    WAIT_ETX --> DELIVER: byte==ETX && sum8(QTD+DATA)==CHK
+    WAIT_ETX --> ERROR:   byte!=ETX || checksum NOK
+
     DELIVER --> WAIT_STX
+    ERROR   --> WAIT_STX
